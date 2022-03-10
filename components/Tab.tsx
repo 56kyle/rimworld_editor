@@ -6,21 +6,24 @@ import styles from '../styles/Tab.module.css';
 
 interface TabOnClick { (tab: TabProps): any}
 
-type TabProps = {
+interface TabProps {
+  tabKey?: string;
   name?: string;
   onClick: TabOnClick;
   icon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-
-const Tab: React.FC<TabProps> = ({ name, onClick, icon, children }) => {
+const Tab: React.FC<TabProps> = ({ tabKey, name, onClick, icon, children }) => {
   const onClickHandler = (event: React.MouseEvent) => {
+    console.log('onClickHandler', event);
+    console.dir(onClick);
+
     onClick({name, onClick, icon, children});
   }
   return (
-    <button className={styles.tab} onClick={onClickHandler}>
-      <span className={styles.name}>{name ? `"${name}"` : ''}</span>
+    <button key={tabKey} className={styles.tab} onClick={onClickHandler}>
+      <span className={styles.name}>{name}</span>
       <span className={styles.icon}>{icon}</span>
     </button>
   );
