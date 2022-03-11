@@ -1,13 +1,30 @@
 
-.tab {
+.saveData {
   display: flex;
-  flex-grow: 1;
+  flex-direction: column;
+  align-content: center;
+  text-align: center;
+  margin-left: 1fr;
+  height: fit-content;
   width: fit-content;
-  justify-content: center;
+  background-color: #2a2b2c;
+  border-width: 1%;
+  border-color: #878787;
+}
+
+
+.headers {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
   background-color: #4a4a4a;
   border-width: 1%;
   border-color: #363636;
 }
+
 
 .name {
   display: flex;
@@ -20,14 +37,13 @@
   border-color: #363636;
 }
 
-.icon {
+.expandButton {
   display: flex;
-  flex-grow: 1;
+  width: fit-content;
+  flex-shrink: 0;
   justify-content: center;
   align-items: center;
   background-color: #4a4a4a;
   border-width: 1%;
   border-color: #363636;
 }
-
-

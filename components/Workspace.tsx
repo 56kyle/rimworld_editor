@@ -3,11 +3,14 @@
 import React, { useState, useEffect, useCallback, Children } from 'react';
 import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import Tab, { TabProps, TabOnClick } from './Tab';
-import styles from '../styles/Workspace.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import convert from 'xml-js';
 import { table } from 'console';
+
+import styles from '../styles/Workspace.module.css';
+import Tab, { TabProps, TabOnClick } from './Tab';
+import SaveData, { SaveDataProps, genSaveDataKey } from './SaveData';
+
 
 
 type WorkspaceProps = {
@@ -22,28 +25,11 @@ const Workspace: React.FC<WorkspaceProps> = ({ children }) => {
     return (Math.random() * 100000).toString();
   }
 
-  const onDrop = useCallback(acceptedFiles => {
-    console.log('onDrop', acceptedFiles);
-    /*
-    acceptedFiles.forEach((file: File) => {
-      const reader = new FileReader()
-
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-      // Do whatever you want with the file contents
-        const binaryStr = reader.result
-        console.log(binaryStr);
-      }
-      reader.readAsArrayBuffer(file)
-    })
-      */
-  }, [])
-  const {getRootProps, getInputProps, open} = useDropzone({
-    onDrop,
-    noClick: true,
-    noKeyboard: true
-  })
+  const focusTab: TabOnClick = useCallback((tab: TabProps) => {
+    console.log('focusTab');
+    console.dir(tab);
+    setFocusedTab(tab);
+  }, []);
 
   const addTab: TabOnClick = useCallback((tab: TabProps) => {
     /* TODO - Refactor the TabOnClick interface and/or TabProps type so that this can have default values */
@@ -51,17 +37,37 @@ const Workspace: React.FC<WorkspaceProps> = ({ children }) => {
     tab.tabKey = tab.tabKey ? tab.tabKey : genTabKey()
     tab.name = tab.name ? tab.name : 'untitled.txt';
     tab.onClick = focusTab;
-    tab.children = <div>This is a test</div>
     let newTabs: Map<string, TabProps> = new Map(tabs);
     newTabs.set(tab.tabKey, tab);
     setTabs(newTabs);
-  }, [tabs]);
+  }, [focusTab, tabs]);
 
-  const focusTab: TabOnClick = (tab: TabProps) => {
-    console.log('focusTab');
-    console.dir(tab);
-    setFocusedTab(tab);
-  }
+  const onDrop = useCallback(acceptedFiles => {
+    console.log('onDrop', acceptedFiles);
+    acceptedFiles.forEach((file: File) => {
+      let reader = new FileReader()
+      reader.onabort = () => console.log('file reading was aborted')
+      reader.onerror = () => console.log('file reading has failed')
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        let xmlData: string | ArrayBuffer | null = reader.result
+        let jsData: convert.Element | convert.ElementCompact = {}
+        if (typeof xmlData === 'string') {
+           jsData = convert.xml2js(xmlData, {compact: false, alwaysChildren: true});
+        }
+        let newSaveDataKey = genSaveDataKey();
+
+        addTab({name: file.name, onClick: focusTab, children: <SaveData key={newSaveDataKey} saveDataKey={newSaveDataKey} {...jsData}></SaveData>});
+      }
+      reader.readAsText(file)
+    })
+  }, [addTab, focusTab])
+
+  const {getRootProps, getInputProps, open} = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true
+  })
 
   return (
     <div {...getRootProps()}>
