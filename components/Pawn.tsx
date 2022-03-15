@@ -7,6 +7,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 
+import defaultMindState from './MindStateElement';
+import DefElement from './DefElement';
 
 enum Action {
   Firefight,
@@ -122,9 +124,14 @@ interface Name {
 }
 
 
-interface PawnData {
-  def: string;
-  faction: string;
+
+interface PawnElement {
+  def: {
+    type: 'element';
+
+  };
+  id: IdElement;
+  faction
   kindDef: string;
   name: Name;
   equipment: any;
@@ -138,6 +145,7 @@ interface PawnProps {
   data: PawnData;
   children?: React.ReactNode;
 }
+
 
 
 const Pawn: React.FC<PawnProps> = ({data, children}: PawnProps) => {

@@ -54,9 +54,14 @@ const Workspace: React.FC<WorkspaceProps> = ({ children }) => {
         let xmlData: string | ArrayBuffer | null = reader.result
         let jsData: convert.Element | convert.ElementCompact = {}
         if (typeof xmlData === 'string') {
-           jsData = convert.xml2js(xmlData, {compact: false, alwaysChildren: true});
+          jsData = convert.xml2js(xmlData, {compact: false, alwaysChildren: true});
+          let testData = convert.xml2json(xmlData, {compact: false, alwaysChildren: true, spaces: 4});
+          console.log('testData');
+          console.log(testData);
+          console.log('/testData');
         }
         let newSaveDataKey = genSaveDataKey();
+
 
         addTab({name: file.name, onClick: focusTab, children: <SaveData key={newSaveDataKey} saveDataKey={newSaveDataKey} {...jsData}></SaveData>});
       }
